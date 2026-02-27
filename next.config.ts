@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Vercel handles SSR automatically - no special config needed
 };
 
 export default nextConfig;
