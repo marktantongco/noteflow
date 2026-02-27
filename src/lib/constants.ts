@@ -1,0 +1,101 @@
+export const PREDEFINED_TRIGGERS = [
+  'Stress',
+  'Anxiety',
+  'Depression',
+  'Boredom',
+  'Social Pressure',
+  'Celebration',
+  'Physical Pain',
+  'Insomnia',
+  'Romantic Relationship',
+  'Work Stress',
+  'Financial Problems',
+  'Family Issues',
+  'Tra reminders',
+  'Environment',
+  'Media',
+  'Anniversary',
+  'Weather',
+  'Hormonal Changes',
+];
+
+export const PREDEFINED_COPING_STRATEGIES = [
+  'Deep Breathing',
+  'Meditation',
+  'Exercise',
+  'Journaling',
+  'Talk to Sponsor',
+  'Call a Friend',
+  'Attend Meeting',
+  'Read Literature',
+  'Prayer',
+  'Music',
+  'Art Therapy',
+  'Nature Walk',
+  'Cooking',
+  'Gaming',
+  'Sleep',
+  'Hydration',
+  'Mindfulness',
+  'Grounding Techniques',
+  'Professional Help',
+  'Support Group',
+];
+
+export const SUBSTANCE_UNITS = [
+  'mg',
+  'g',
+  'oz',
+  'ml',
+  'l',
+  'pills',
+  'tablets',
+  'capsules',
+  'doses',
+  'shots',
+  'beers',
+  'glasses',
+  'joints',
+  'packs',
+];
+
+export const EMOTIONS = [
+  'Happy',
+  'Sad',
+  'Anxious',
+  'Angry',
+  'Bored',
+  'Stressed',
+  'Excited',
+  'Lonely',
+  'Hopeful',
+  'Frustrated',
+  'Calm',
+  'Overwhelmed',
+  'Guilt',
+  'Pride',
+  'Fear',
+];
+
+export const NUDGE_MESSAGES = [
+  "You're stronger than you know. Keep going!",
+  "One day at a time. You've got this!",
+  "Remember why you started. Stay strong!",
+  "I'm proud of your progress. Keep fighting!",
+  "This moment is temporary. Stay resilient!",
+  "Your recovery journey matters. Keep going!",
+  "You've overcome challenges before. You can do this!",
+  "Every sober day is a victory. Celebrate!",
+];
+
+export const APP_VERSION = '1.0.0';
+
+export const DEFAULT_NOTIFICATION_PREFS = {
+  journalReminder: true,
+  journalReminderTime: '20:00',
+  medicationAlerts: false,
+  customReminders: [],
+  quietHoursStart: '22:00',
+  quietHoursEnd: '07:00',
+  pushEnabled: true,
+};
