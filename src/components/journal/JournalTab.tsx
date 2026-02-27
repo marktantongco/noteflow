@@ -26,6 +26,7 @@ export function JournalTab() {
   const [newStrategy, setNewStrategy] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [editingEntry, setEditingEntry] = useState<RecoveryEntry | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const entries = useLiveQuery(
     () => user ? db.entries.where('userId').equals(user.id).toArray() : [],
@@ -45,6 +46,7 @@ export function JournalTab() {
         setTriggers(existingEntry.triggers);
         setCopingStrategies(existingEntry.copingStrategies);
         setNotes(existingEntry.notes);
+        setHasChanges(false);
       } else {
         setEditingEntry(null);
         setMood(5);
@@ -52,11 +54,12 @@ export function JournalTab() {
         setTriggers([]);
         setCopingStrategies([]);
         setNotes('');
+        setHasChanges(false);
       }
     }
   }, [selectedDate, entries]);
 
-  const saveEntry = async () => {
+  const saveEntry = async (showNotification = false) => {
     if (!user) return;
     const now = new Date().toISOString();
     const entry: RecoveryEntry = {
@@ -74,33 +77,41 @@ export function JournalTab() {
 
     await db.entries.put(entry);
     setEditingEntry(entry);
-    showToast('Journal entry saved', 'success');
+    setHasChanges(false);
+    if (showNotification) {
+      showToast('Journal entry saved', 'success');
+    }
   };
 
-  const debouncedSave = useCallback(debounce(saveEntry, 1000), [mood, cravingLevel, triggers, copingStrategies, notes, selectedDate]);
+  const handleMoodChange = (value: number) => {
+    setMood(value);
+    setHasChanges(true);
+  };
 
-  useEffect(() => {
-    if (editingEntry) {
-      debouncedSave();
-    }
-  }, [mood, cravingLevel, triggers, copingStrategies, notes, debouncedSave, editingEntry]);
+  const handleCravingChange = (value: number) => {
+    setCravingLevel(value);
+    setHasChanges(true);
+  };
 
   const toggleTrigger = (trigger: string) => {
     setTriggers(prev =>
       prev.includes(trigger) ? prev.filter(t => t !== trigger) : [...prev, trigger]
     );
+    setHasChanges(true);
   };
 
   const toggleStrategy = (strategy: string) => {
     setCopingStrategies(prev =>
       prev.includes(strategy) ? prev.filter(s => s !== strategy) : [...prev, strategy]
     );
+    setHasChanges(true);
   };
 
   const addCustomTrigger = () => {
     if (triggerInput && !triggers.includes(triggerInput)) {
       setTriggers(prev => [...prev, triggerInput]);
       setTriggerInput('');
+      setHasChanges(true);
     }
   };
 
@@ -109,7 +120,13 @@ export function JournalTab() {
       setCopingStrategies(prev => [...prev, newStrategy]);
       setNewStrategy('');
       setShowNewStrategy(false);
+      setHasChanges(true);
     }
+  };
+
+  const handleNotesChange = (value: string) => {
+    setNotes(value);
+    setHasChanges(true);
   };
 
   const startVoiceInput = () => {
@@ -169,7 +186,7 @@ export function JournalTab() {
           <Slider
             label="How are you feeling today?"
             value={mood}
-            onChange={setMood}
+            onChange={handleMoodChange}
             min={1}
             max={10}
           />
@@ -179,7 +196,7 @@ export function JournalTab() {
           <Slider
             label="Craving Intensity"
             value={cravingLevel}
-            onChange={setCravingLevel}
+            onChange={handleCravingChange}
             min={1}
             max={10}
           />
@@ -254,7 +271,7 @@ export function JournalTab() {
         <Textarea
           placeholder="Write your thoughts... (Markdown supported)"
           value={notes}
-          onChange={e => setNotes(e.target.value)}
+          onChange={e => handleNotesChange(e.target.value)}
           className="min-h-[150px]"
         />
         {notes && (
@@ -268,9 +285,9 @@ export function JournalTab() {
       </Card>
 
       <div className="flex justify-end">
-        <Button onClick={saveEntry}>
+        <Button onClick={() => saveEntry(true)} disabled={!hasChanges}>
           <Save className="w-4 h-4 mr-2" />
-          Save Entry
+          {hasChanges ? 'Save Entry' : 'Saved'}
         </Button>
       </div>
 
