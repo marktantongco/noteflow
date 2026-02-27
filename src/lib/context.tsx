@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback, useState } from 'react';
 import type { AppState, AppAction, Theme, TabId, User } from '@/types';
 import { DEFAULT_NOTIFICATION_PREFS } from '@/lib/constants';
 import { db } from '@/lib/db';
@@ -38,12 +38,31 @@ interface AppContextType {
   setActiveTab: (tab: TabId) => void;
   login: (email: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
+  dbReady: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const [dbReady, setDbReady] = useState(false);
+
+  const initDb = useCallback(async () => {
+    try {
+      await db.open();
+      setDbReady(true);
+    } catch (error) {
+      console.error('Database error:', error);
+      if (error instanceof Error && error.message.includes('primary key')) {
+        await indexedDB.deleteDatabase('NoteFlowDB');
+        window.location.reload();
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    initDb();
+  }, [initDb]);
 
   const setUser = useCallback((user: User | null) => {
     dispatch({ type: 'SET_USER', payload: user });
@@ -117,6 +136,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setActiveTab,
         login,
         logout,
+        dbReady,
       }}
     >
       {children}

@@ -11,7 +11,7 @@ import { AnalyticsTab } from '@/components/analytics/AnalyticsTab';
 import { BuddySystem } from '@/components/buddy/BuddySystem';
 import { SettingsTab } from '@/components/settings/SettingsTab';
 import { Button, Input, Card } from '@/components/shared';
-import { Heart, LogIn } from 'lucide-react';
+import { Heart, LogIn, Loader2 } from 'lucide-react';
 import type { TabId } from '@/types';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -62,12 +62,15 @@ function AuthScreen({ onLogin }: { onLogin: (name: string, email: string) => voi
 import React from 'react';
 
 function AppContent() {
-  const { state, setActiveTab, login } = useApp();
+  const { state, setActiveTab, login, dbReady } = useApp();
 
-  if (state.isLoading) {
+  if (state.isLoading || !dbReady) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <p className="text-foreground-muted">Loading...</p>
+        </div>
       </div>
     );
   }

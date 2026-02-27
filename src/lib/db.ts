@@ -34,6 +34,10 @@ export class NoteFlowDB extends Dexie {
 
 export const db = new NoteFlowDB();
 
+db.on('ready', async () => {
+  console.log('NoteFlowDB ready');
+});
+
 export async function getUserData(userId: string) {
   const [entries, logs, notes, folders, buddies] = await Promise.all([
     db.entries.where('userId').equals(userId).toArray(),
